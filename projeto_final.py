@@ -1,20 +1,59 @@
-import sys
 import pygame
+import os
+import sys
 
-pygame.init()  # inicia rotinas do pygame
+# caracteristicas do ambiente 
 
-surf = pygame.display.set_mode([400, 400]) # crio superficie para o jogo
+pygame.init()
+#tsete = pygame.image.load("C:/Users/andre/OneDrive/AINSPER/DESOFT/referencia/assets/img/inicio.png")
+# config tela principal
+WIDTH = 600
+HEIGHT = 600
+tela = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Pega a nave")
 
-surf.fill( [0, 0, 0] ) # preenche a tela com a cor preta
+arquivo = os.path.join("C:/Users/andre/OneDrive/AINSPER/DESOFT/projeto final/PF_LAL/")     #caso esteja em uma pasta diferente 
+try:
+    imagem = pygame.image.load("background.png")
+    imagem = pygame.transform.scale(imagem, [WIDTH,HEIGHT])
+except pygame.error:
+    print ("Erro ao tentar ler imagem: background.png")
+    sys.exit() 
 
-pygame.draw.circle(surf, [0, 255, 255], [200, 200], 50) # desenha círculo
+# cores
+cor_branca = (255,255,255)
+cor_azul = (108, 194, 236)
+cor_verde = (152,231,114)
 
-pygame.display.update() # faz a atualização da tela
+clock = pygame.time.Clock()     # objeto para controle das atualizações de imagens
+pos = 0
 
-# Game Loop
-while True:
-    eventos = pygame.event.get()
-    for evento in eventos:
-        if evento.type == pygame.QUIT:
-            pygame.quit() # terminado a aplicação pygame
-            sys.exit()    # sai pela rotina do sistema
+rect = pygame.Rect(10, 10, 5, 75)
+rect2 = pygame.Rect(585,520,5,75)
+
+loop = True
+while loop:
+    delta_time = clock.tick(60) 
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit() 
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                rect.move_ip(-10,0)
+            if event.key == pygame.K_RIGHT:
+                rect.move_ip(10,0)
+            if event.key == pygame.K_UP:
+                rect.move_ip(0,-10)
+            if event.key == pygame.K_DOWN:
+                rect.move_ip(0,10)
+            if event.key == pygame.K_SPACE:
+                rect.move_ip(10,10)
+            if event.key == pygame.K_BACKSPACE:
+                rect.move_ip(-10,-10)
+
+    tela.blit(imagem, [pos,0])
+    pygame.draw.rect(tela, [255,0,0], rect)
+    pygame.draw.rect(tela, [255,255,0], rect2)
+    pygame.display.flip()         # faz a atualização da tela
+
