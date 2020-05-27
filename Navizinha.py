@@ -1,59 +1,149 @@
+# ===== Inicialização =====
+# ----- Importa e inicia pacotes
 import pygame
-import os
-import sys
-
-# caracteristicas do ambiente 
+import random
 
 pygame.init()
 
-# config tela principal
+# ----- Gera tela principal
 WIDTH = 600
 HEIGHT = 600
-tela = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Pega a nave")
+window = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Pong')
 
-arquivo = os.path.join("background.png")         #caso esteja em uma pasta diferente 
-try:
-    imagem = pygame.image.load("background.png")
-    imagem = pygame.transform.scale(imagem, [WIDTH,HEIGHT])
-except pygame.error:
-    print ("Erro ao tentar ler imagem: background.png")
-    sys.exit() 
+# ----- Inicia assets
+ball_WIDTH = 50
+ball_HEIGHT = 50
+rect_WIDTH = 20
+rect_HEIGHT = 100
+font = pygame.font.SysFont(None, 48)
+background = pygame.image.load('assets/img/starfield.png').convert()
+ball_img = pygame.image.load('assets/img/fire_ball.png').convert_alpha()
+ball_img = pygame.transform.scale(ball_img, (ball_WIDTH, ball_HEIGHT))
+rect_img = pygame.image.load('assets/img/playerShip1_orange.png').convert_alpha()
+rect_img = pygame.transform.scale(rect_img, (rect_WIDTH, rect_HEIGHT))
 
-# cores
-cor_branca = (255,255,255)
-cor_azul = (108, 194, 236)
-cor_verde = (152,231,114)
+# ----- Inicia estruturas de dados
+# Definindo os novos tipos
+class rect(pygame.sprite.Sprite):
+    def __init__(self, img, player):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+        self.image = img
+        self.rect = self.image.get_rect()
+        espaço_da_tela = 10
+        if player == 1:
+            self.rect.left = espaço_da_tela
+        if player == 2:
+            self.rect.right = WIDTH - espaço_da_tela
+        self.rect.centery = HEIGHT/2
+        self.speedy = 0
 
-clock = pygame.time.Clock()     # objeto para controle das atualizações de imagens
-pos = 0
+    def update(self):
+        # Atualização da posição da nave
+        self.rect.y += self.speedy
+        # Mantem dentro da tela
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
 
-rect = pygame.Rect(10, 10, 5, 75)
-rect2 = pygame.Rect(585,520,5,75)
+class ball(pygame.sprite.Sprite):
+    def __init__(self, img):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
 
-loop = True
-while loop:
-    delta_time = clock.tick(60) 
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH/2
+        self.rect.centery = HEIGHT/2
+        self.speedx = ball_speedx
+        self.speedy = ball_speedy
+
+    def update(self):
+        # Atualizando a posição da bola
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        # Se a bola toca alguma parede, ela inverte a velocidade
+        if self.rect.bottom > HEIGHT or self.rect.top < 0:
+            self.speedy = ball_speedy*(-1)
+        if self.rect.right > WIDTH or self.rect.left < 0 :
+            self.speedx = ball_speedx*(-1)
+                #self.rect.x = random.randint(0, WIDTH-ball_WIDTH) apenas para reniciar o jogo
+                #self.rect.y = random.randint(-100, -ball_HEIGHT)
+    
+
+game = True
+# Variável para o ajuste de velocidade
+clock = pygame.time.Clock()
+FPS = 30
+
+#definir a direção inicial da bola
+ball_speed = 12
+ball_speedx = ball_speed - random.randint(6,10)
+ball_speedy = ball_speed - ball_speedx
+
+
+all_sprites = pygame.sprite.Group()
+
+# Criando os jogadores
+player1 = rect(rect_img,1)
+player2 = rect(rect_img,2)
+all_sprites.add(player1)
+all_sprites.add(player2)
+# Criando a bola
+ball = ball(ball_img)
+all_sprites.add(ball)
+
+# ===== Loop principal =====
+while game:
+    clock.tick(FPS)
+
+    # ----- Trata eventos
     for event in pygame.event.get():
+        # ----- Verifica consequências
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit() 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                rect.move_ip(-10,0)
-            if event.key == pygame.K_RIGHT:
-                rect.move_ip(10,0)
+            game = False
+        # Verifica se apertou alguma tecla.
+        if event.type == pygame.KEYDOWN:
+            # Dependendo da tecla, altera a velocidade.
+            #player1
             if event.key == pygame.K_UP:
-                rect.move_ip(0,-10)
+                player1.speedy -= 8
             if event.key == pygame.K_DOWN:
-                rect.move_ip(0,10)
-            if event.key == pygame.K_SPACE:
-                rect.move_ip(10,10)
-            if event.key == pygame.K_BACKSPACE:
-                rect.move_ip(-10,-10)
+                player1.speedy += 8
+            #player2
+            if event.key == pygame.K_w:
+                player2.speedy -= 8
+            if event.key == pygame.K_s:
+                player2.speedy += 8
+        # Verifica se soltou alguma tecla.
+        if event.type == pygame.KEYUP:
+            # Dependendo da tecla, altera a velocidade.
+            #player1
+            if event.key == pygame.K_UP:
+                player1.speedy += 8
+            if event.key == pygame.K_DOWN:
+                player1.speedy -= 8
+            #player2
+            if event.key == pygame.K_w:
+                player2.speedy += 8
+            if event.key == pygame.K_s:
+                player2.speedy -= 8
 
-    tela.blit(imagem, [pos,0])
-    pygame.draw.rect(tela, [255,0,0], rect)
-    pygame.draw.rect(tela, [255,255,0], rect2)
-    pygame.display.flip()         # faz a atualização da tela
+
+    # ----- Atualiza estado do jogo
+    # Atualizando a posição dos meteoros
+    all_sprites.update()
+
+    # ----- Gera saídas
+    window.fill((0, 0, 0))  # Preenche com a cor branca
+    window.blit(background, (0, 0))
+    # Desenhando meteoros
+    all_sprites.draw(window)
+
+    pygame.display.update()  # Mostra o novo frame para o jogador
+
+# ===== Finalização =====
+pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
 
