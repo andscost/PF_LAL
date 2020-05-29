@@ -17,10 +17,10 @@ ball_HEIGHT = 50
 rect_WIDTH = 20
 rect_HEIGHT = 100
 font = pygame.font.SysFont(None, 48)
-background = pygame.image.load('assets/img/starfield.png').convert()
-ball_img = pygame.image.load('assets/img/fire_ball.png').convert_alpha()
+background = pygame.image.load('img/starfield.png').convert()
+ball_img = pygame.image.load('img/fire_ball.png').convert_alpha()
 ball_img = pygame.transform.scale(ball_img, (ball_WIDTH, ball_HEIGHT))
-rect_img = pygame.image.load('assets/img/playerShip1_orange.png').convert_alpha()
+rect_img = pygame.image.load('img/playerShip1_orange.png').convert_alpha()
 rect_img = pygame.transform.scale(rect_img, (rect_WIDTH, rect_HEIGHT))
 
 # ----- Inicia estruturas de dados
