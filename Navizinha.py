@@ -66,12 +66,12 @@ class ball(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         # Se a bola toca alguma parede, ela inverte a velocidade
         if self.rect.bottom > HEIGHT or self.rect.top < 0:
-            self.speedy = ball_speedy*(-1)
+            self.speedy = self.speedy *(-1)
         if self.rect.right > WIDTH or self.rect.left < 0 :
-            self.speedx = ball_speedx*(-1)
+            self.speedx = self.speedx*(-1)
                 #self.rect.x = random.randint(0, WIDTH-ball_WIDTH) apenas para reniciar o jogo
-                #self.rect.y = random.randint(-100, -ball_HEIGHT)
-    
+                #self.rect.y = random.randint(-100, -ball_HEIGHT)    
+
 
 game = True
 # Variável para o ajuste de velocidade
@@ -79,7 +79,7 @@ clock = pygame.time.Clock()
 FPS = 30
 
 #definir a direção inicial da bola
-ball_speed = 12
+ball_speed = 22
 ball_speedx = ball_speed - random.randint(6,10)
 ball_speedy = ball_speed - ball_speedx
 
