@@ -2,6 +2,7 @@
 # ----- Importa e inicia pacotes
 import pygame
 import random
+import sys
 
 pygame.init()
 
@@ -79,7 +80,7 @@ clock = pygame.time.Clock()
 FPS = 30
 
 #definir a direção inicial da bola
-ball_speed = 22
+ball_speed = 20
 ball_speedx = ball_speed - random.randint(6,10)
 ball_speedy = ball_speed - ball_speedx
 
@@ -98,11 +99,11 @@ all_sprites.add(ball)
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
-
     # ----- Trata eventos
     for event in pygame.event.get():
         # ----- Verifica consequências
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            sys.exit()
             game = False
         # Verifica se apertou alguma tecla.
         if event.type == pygame.KEYDOWN:
