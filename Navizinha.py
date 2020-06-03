@@ -2,6 +2,7 @@
 # ----- Importa e inicia pacotes
 import pygame
 import random
+import math
 import sys
 
 pygame.init()
@@ -10,23 +11,26 @@ pygame.init()
 WIDTH = 600
 HEIGHT = 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Pong')
+pygame.display.set_caption('Bong ;)')
 
 # ----- Inicia assets
 ball_WIDTH = 50
 ball_HEIGHT = 50
-rect_WIDTH = 20
-rect_HEIGHT = 100
+player_WIDTH = 20
+player_HEIGHT = 100
 font = pygame.font.SysFont(None, 48)
 background = pygame.image.load('img/starfield.png').convert()
+background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 ball_img = pygame.image.load('img/fire_ball.png').convert_alpha()
 ball_img = pygame.transform.scale(ball_img, (ball_WIDTH, ball_HEIGHT))
-rect_img = pygame.image.load('img/playerShip1_orange.png').convert_alpha()
-rect_img = pygame.transform.scale(rect_img, (rect_WIDTH, rect_HEIGHT))
+player1_img = pygame.image.load('img/player1.png').convert_alpha()
+player1_img = pygame.transform.scale(player1_img, (player_WIDTH, player_HEIGHT))
+player2_img = pygame.image.load('img/player2.png').convert_alpha()
+player2_img = pygame.transform.scale(player2_img, (player_WIDTH, player_HEIGHT))
 
 # ----- Inicia estruturas de dados
 # Definindo os novos tipos
-class rect(pygame.sprite.Sprite):
+class player(pygame.sprite.Sprite):
     def __init__(self, img, player):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -58,20 +62,25 @@ class ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.centery = HEIGHT/2
-        self.speedx = ball_speedx
-        self.speedy = ball_speedy
+        #definir a direção inicial da bola
+        ball_speed = 10
+        self.speedx = ball_speed
+        self.speedy = 0
 
     def update(self):
         # Atualizando a posição da bola
         self.rect.x += self.speedx
         self.rect.y += self.speedy
-        # Se a bola toca alguma parede, ela inverte a velocidade
+        # Se a bola toca no teto ou no fundo, ela inverte a velocidade
         if self.rect.bottom > HEIGHT or self.rect.top < 0:
             self.speedy = self.speedy *(-1)
-        if self.rect.right > WIDTH or self.rect.left < 0 :
+        # colisao da bola com os players
+        if self.rect.right > player2.rect.left and self.rect.right < player2.rect.centerx and self.rect.top < player2.rect.bottom and self.rect.bottom > player2.rect.top or self.rect.left < player1.rect.right and self.rect.left > player1.rect.centerx and self.rect.top < player1.rect.bottom and self.rect.bottom > player1.rect.top :
             self.speedx = self.speedx*(-1)
-                #self.rect.x = random.randint(0, WIDTH-ball_WIDTH) apenas para reniciar o jogo
-                #self.rect.y = random.randint(-100, -ball_HEIGHT)    
+        #renicia a posição da bolinha caso alg pontue 
+        if self.rect.left > WIDTH or self.rect.right < 0:
+            self.rect.centerx = WIDTH/2
+            self.rect.centery = HEIGHT/2
 
 
 game = True
@@ -79,17 +88,11 @@ game = True
 clock = pygame.time.Clock()
 FPS = 30
 
-#definir a direção inicial da bola
-ball_speed = 20
-ball_speedx = ball_speed - random.randint(6,10)
-ball_speedy = ball_speed - ball_speedx
-
-
 all_sprites = pygame.sprite.Group()
 
 # Criando os jogadores
-player1 = rect(rect_img,1)
-player2 = rect(rect_img,2)
+player1 = player(player1_img,1)
+player2 = player(player2_img,2)
 all_sprites.add(player1)
 all_sprites.add(player2)
 # Criando a bola
@@ -109,27 +112,27 @@ while game:
         if event.type == pygame.KEYDOWN:
             # Dependendo da tecla, altera a velocidade.
             #player1
-            if event.key == pygame.K_UP:
-                player1.speedy -= 8
-            if event.key == pygame.K_DOWN:
-                player1.speedy += 8
-            #player2
             if event.key == pygame.K_w:
-                player2.speedy -= 8
+                player1.speedy -= 8
             if event.key == pygame.K_s:
+                player1.speedy += 8
+             #player2
+            if event.key == pygame.K_UP:
+                player2.speedy -= 8
+            if event.key == pygame.K_DOWN:
                 player2.speedy += 8
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
             #player1
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_w:
                 player1.speedy += 8
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_s:
                 player1.speedy -= 8
             #player2
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_UP:
                 player2.speedy += 8
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_DOWN:
                 player2.speedy -= 8
 
 
