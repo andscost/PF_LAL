@@ -11,7 +11,7 @@ pygame.init()
 WIDTH = 600
 HEIGHT = 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Bong ;)')
+pygame.display.set_caption('Pong')
 
 # ----- Inicia assets
 ball_WIDTH = 50
@@ -62,9 +62,9 @@ class ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.centery = HEIGHT/2
-        #definir a direção inicial da bola
-        ball_speed = 10
-        self.speedx = ball_speed
+        #definir a direção e a velocidade inicial da bola
+        self.ball_speed = 10
+        self.speedx = 10
         self.speedy = 0
 
     def update(self):
@@ -73,16 +73,32 @@ class ball(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         # Se a bola toca no teto ou no fundo, ela inverte a velocidade
         if self.rect.bottom > HEIGHT or self.rect.top < 0:
-            self.speedy = self.speedy *(-1)
-        # colisao da bola com os players
-        if self.rect.right > player2.rect.left and self.rect.right < player2.rect.centerx and self.rect.top < player2.rect.bottom and self.rect.bottom > player2.rect.top or self.rect.left < player1.rect.right and self.rect.left > player1.rect.centerx and self.rect.top < player1.rect.bottom and self.rect.bottom > player1.rect.top :
-            self.speedx = self.speedx*(-1)
-        #renicia a posição da bolinha caso alg pontue 
-        if self.rect.left > WIDTH or self.rect.right < 0:
+            self.speedy *= -1
+        # colisao da bola com os players, que randomiza os valores da direção
+        contato = 10 #define a largura da regiao de colisao que fica na frente do retangulo
+        #player1
+        if self.rect.left < player1.rect.right+contato and self.rect.left > player1.rect.right and self.rect.top < player1.rect.bottom and self.rect.bottom > player1.rect.top:
+            rng = random.randint(12,20)
+            angulo = (rng*math.pi)/16
+            self.speedx = -(self.ball_speed*math.cos(angulo))
+            self.speedy = self.ball_speed*math.sin(angulo)
+        #player2
+        if self.rect.right > player2.rect.left-contato and self.rect.right < player2.rect.left and self.rect.top < player2.rect.bottom and self.rect.bottom > player2.rect.top:
+            rng = random.randint(12,20)
+            angulo = (rng*math.pi)/16
+            self.speedx = self.ball_speed*math.cos(angulo)
+            self.speedy = self.ball_speed*math.sin(angulo)
+        #renicia a posição da bolinha e sua velocidade caso alg pontue 
+        if self.rect.left > WIDTH: #player 1 ganha ponto
             self.rect.centerx = WIDTH/2
             self.rect.centery = HEIGHT/2
-
-
+            self.speedx = 10
+            self.speedy = 0 
+        if self.rect.right < 0: #player 2 ganha ponto
+            self.rect.centerx = WIDTH/2
+            self.rect.centery = HEIGHT/2
+            self.speedx = -10
+            self.speedy = 0  
 game = True
 # Variável para o ajuste de velocidade
 clock = pygame.time.Clock()
@@ -108,6 +124,7 @@ while game:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             sys.exit()
             game = False
+
         # Verifica se apertou alguma tecla.
         if event.type == pygame.KEYDOWN:
             # Dependendo da tecla, altera a velocidade.
@@ -147,7 +164,5 @@ while game:
     all_sprites.draw(window)
 
     pygame.display.update()  # Mostra o novo frame para o jogador
-
 # ===== Finalização =====
-pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
-
+    pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
