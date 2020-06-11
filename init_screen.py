@@ -6,10 +6,9 @@ import os
 
 from config import FPS, WIDTH, HEIGHT, BLACK, Points, INIT, GAME, QUIT, ball_WIDTH, ball_HEIGHT, player_WIDTH, player_HEIGHT
 
-
 def init_screen (window): 
 
-    background = pygame.image.load('img/starfield.png').convert()
+    background = pygame.image.load('img/inicio.png').convert()
     background = pygame.transform.scale(background, (WIDTH,HEIGHT))
     background_rect = background.get_rect()
 

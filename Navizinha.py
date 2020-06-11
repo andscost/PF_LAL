@@ -22,6 +22,8 @@ Points = [0,0]
 font = pygame.font.SysFont(None, 48)
 background = pygame.image.load('img/starfield.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
+inicio = pygame.image.load('img/inicio.png').convert()
+inicio_rect = background.get_rect()
 ball_img = pygame.image.load('img/fire_ball.png').convert_alpha()
 ball_img = pygame.transform.scale(ball_img, (ball_WIDTH, ball_HEIGHT))
 player1_img = pygame.image.load('img/player1.png').convert_alpha()
@@ -31,7 +33,7 @@ player2_img = pygame.transform.scale(player2_img, (player_WIDTH, player_HEIGHT))
 
 # ----- Carrega os sons do jogo
 pygame.mixer.music.load('snd/tgfcoder-FrozenJam-SeamlessLoop.ogg')
-pygame.mixer.music.set_volume(0.4)
+pygame.mixer.music.set_volume(0.2)
 boom_sound = pygame.mixer.Sound('snd/expl3.wav')
 destroy_sound = pygame.mixer.Sound('snd/expl6.wav')
 pew_sound = pygame.mixer.Sound('snd/pew.wav')
@@ -71,8 +73,8 @@ class ball(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH/2
         self.rect.centery = HEIGHT/2
         #definir a direção e a velocidade inicial da bola
-        self.ball_speed = 10
-        self.speedx = 10
+        self.ball_speed = 15
+        self.speedx = 15
         self.speedy = 0
 
     def update(self):
@@ -83,7 +85,7 @@ class ball(pygame.sprite.Sprite):
         if self.rect.bottom > HEIGHT or self.rect.top < 0:
             self.speedy *= -1
         # colisao da bola com os players, que randomiza os valores da direção
-        contato = 10 #define a largura da regiao de colisao que fica na frente do retangulo
+        contato = 15 #define a largura da regiao de colisao que fica na frente do retangulo
         #player1
         if self.rect.left < player1.rect.right+contato and self.rect.left > player1.rect.right and self.rect.top < player1.rect.bottom and self.rect.bottom > player1.rect.top:
             pew_sound.play()
@@ -103,7 +105,7 @@ class ball(pygame.sprite.Sprite):
             destroy_sound.play()
             self.rect.centerx = WIDTH/2
             self.rect.centery = HEIGHT/2
-            self.speedx = 10
+            self.speedx = 15
             self.speedy = 0
             Points[0] += 1 
             
@@ -111,7 +113,7 @@ class ball(pygame.sprite.Sprite):
             destroy_sound.play()
             self.rect.centerx = WIDTH/2
             self.rect.centery = HEIGHT/2
-            self.speedx = -10
+            self.speedx = -15
             self.speedy = 0 
             Points[1] += 1  
 game = True
@@ -132,64 +134,100 @@ all_sprites.add(ball)
 
 DONE = 0
 PLAYING = 1
-PERDEVIDA = 2
+GAMEOVER = 2
 state = PLAYING
 
 # ===== Loop principal =====
-pygame.mixer.music.play(loops=-1)
-while state != DONE:
+game = True
+while game:
     clock.tick(FPS)
     # ----- Trata eventos
+        
     for event in pygame.event.get():
+        #tela de inicio
+        window.fill((0,0,0))  # Preenche com a cor preta
+        window.blit(inicio, inicio_rect) 
+        pygame.display.update()  # Mostra o novo frame para o jogador
+
         # ----- Verifica consequências
         if event.type == pygame.QUIT:
-            state = DONE
-        # Só verifica o teclado se está no estado de jogo
-        if state == PLAYING:
-            if event.type == pygame.KEYDOWN:
-                # Dependendo da tecla, altera a velocidade.
-                #player1
-                if event.key == pygame.K_w:
-                    player1.speedy -= 8
-                if event.key == pygame.K_s:
-                    player1.speedy += 8
-                #player2
-                if event.key == pygame.K_UP:
-                    player2.speedy -= 8
-                if event.key == pygame.K_DOWN:
-                    player2.speedy += 8
-            # Verifica se soltou alguma tecla.
-            if event.type == pygame.KEYUP:
-                # Dependendo da tecla, altera a velocidade.
-                #player1
-                if event.key == pygame.K_w:
-                    player1.speedy += 8
-                if event.key == pygame.K_s:
-                    player1.speedy -= 8
-                #player2
-                if event.key == pygame.K_UP:
-                    player2.speedy += 8
-                if event.key == pygame.K_DOWN:
-                    player2.speedy -= 8
+            game = False
+
+        if event.type == pygame.KEYUP:
+            pygame.mixer.music.play(loops=-1)
+            while state == PLAYING: 
+                clock.tick(FPS)
+                # ----- Trata eventos
+                for event in pygame.event.get():
+                    # ----- Verifica consequências
+                    if event.type == pygame.QUIT:
+                        state = DONE
+                    # Só verifica o teclado se está no estado de jogo
+                    if state == PLAYING:
+                        if event.type == pygame.KEYDOWN:
+                            # Dependendo da tecla, altera a velocidade.
+                            #player1
+                            if event.key == pygame.K_w:
+                                player1.speedy -= 8
+                            if event.key == pygame.K_s:
+                                player1.speedy += 8
+                            #player2
+                            if event.key == pygame.K_UP:
+                                player2.speedy -= 8
+                            if event.key == pygame.K_DOWN:
+                                player2.speedy += 8
+                        # Verifica se soltou alguma tecla.
+                        if event.type == pygame.KEYUP:
+                            # Dependendo da tecla, altera a velocidade.
+                            #player1
+                            if event.key == pygame.K_w:
+                                player1.speedy += 8
+                            if event.key == pygame.K_s:
+                                player1.speedy -= 8
+                            #player2
+                            if event.key == pygame.K_UP:
+                                player2.speedy += 8
+                            if event.key == pygame.K_DOWN:
+                                player2.speedy -= 8
 
 
-    # ----- Atualiza estado do jogo
-    # Atualizando a posição dos meteoros
-    all_sprites.update()
+                # ----- Atualiza estado do jogo
+                # Atualizando a posição dos meteoros
+                all_sprites.update()
 
-    # ----- Gera saídas
-    window.fill((0, 0, 0))  # Preenche com a cor branca
-    window.blit(background, (0, 0))
-    # Desenhando meteoros
-    all_sprites.draw(window)
+                # ----- Gera saídas
+                window.fill((0, 0, 0))  # Preenche com a cor branca
+                window.blit(background, (0, 0))
+                # Desenhando meteoros
+                all_sprites.draw(window)
 
-    # Desenhando o score
-    text_surface = font.render("{}   {}".format(Points[0],Points[1]), True, (255, 255, 0))
-    text_rect = text_surface.get_rect()
-    text_rect.midtop = (WIDTH / 2,  10)
-    window.blit(text_surface, text_rect)
+                # Desenhando o score
+                text_surface = font.render("{}   {}".format(Points[0],Points[1]), True, (255, 255, 0))
+                text_rect = text_surface.get_rect()
+                text_rect.midtop = (WIDTH / 2,  10)
+                window.blit(text_surface, text_rect)
 
-    pygame.display.update()  # Mostra o novo frame para o jogador
+                #verifica se a quantidade de pontos para dar game over
+                for pontos in Points:
+                    if pontos >= 3:
+                        state = DONE
+
+                pygame.display.update()  # Mostra o novo frame para o jogador
+            state = GAMEOVER
+            while state == GAMEOVER:
+                clock.tick(FPS)
+                # ----- Trata eventos
+                for event in pygame.event.get():
+                    # ----- Verifica consequências
+                    if event.type == pygame.QUIT:
+                        state = DONE
+                    if event.type == pygame.KEYUP: #recomeçar o jogo
+                        state = PLAYING
+                        Points[0] = 0
+                        Points[1] = 0
+                window.fill((255,255,255))  # Preenche com a cor preta
+                pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
+
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
 

@@ -2,36 +2,37 @@ import pygame
 import os
 import sys
 from config import FPS, WIDTH, HEIGHT, BLACK, Points, INIT, GAME, QUIT, ball_WIDTH, ball_HEIGHT, player_WIDTH, player_HEIGHT
-from assets import background, ball_img, player1_img, player2_img,boom_sound, destroy_sound, pew_sound
-from sprites import player, ball 
+from assets import background, ball_img, player1_img, player2_img,boom_sound, destroy_sound, pew_sound, carrega_musica
+from sprites import Player, Ball 
+
 
 def game_screen(window):
-
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
-
-    assets = load_assets()
 
     all_sprites = pygame.sprite.Group()
 
     # Criando os jogadores
-    player1 = player(player1_img,1)
-    player2 = player(player2_img,2)
+    player1 = Player(player1_img,1)
+    player2 = Player(player2_img,2)
     all_sprites.add(player1)
     all_sprites.add(player2)
 
     # Criando a bola
-    ball = ball(ball_img)
-    all_sprites.add(ball)
+    #ball = Ball(ball_img)
+    #all_sprites.add(ball)
+    pygame.font.init()
+    pygame.mixer.init()
     
-
     DONE = 0
     PLAYING = 1
     PERDEVIDA = 2
-    font = pygame.font.SysFont(None, 48)
+    font = pygame.font.Font(None, 48)
+    #font = pygame.font.Sysfont(None, 48)
     state = PLAYING
 
     # ===== Loop principal =====
+    carrega_musica()
     pygame.mixer.music.play(loops=-1)
     while state != DONE:
         clock.tick(FPS)

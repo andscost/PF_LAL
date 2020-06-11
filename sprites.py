@@ -9,7 +9,7 @@ from assets import background, ball_img, player1_img, player2_img,boom_sound, de
 
 # ----- Inicia estruturas de dados
 # Definindo os novos tipos
-class player(pygame.sprite.Sprite):
+class Player(pygame.sprite.Sprite):
     def __init__(self, img, player):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -32,11 +32,10 @@ class player(pygame.sprite.Sprite):
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
 
-class ball(pygame.sprite.Sprite):
+class Ball(pygame.sprite.Sprite):
     def __init__(self, img):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
