@@ -75,11 +75,16 @@ class ball(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH/2
         self.rect.centery = HEIGHT/2
         #definir a direção e a velocidade inicial da bola
+<<<<<<< HEAD
         self.ball_speed = 5
         if len(all_balls)%2 == 0:
             self.speedx = self.ball_speed
         else: 
             self.speedx = -self.ball_speed
+=======
+        self.ball_speed = 15
+        self.speedx = 15
+>>>>>>> b5fec24c3a93f3f2b98171fb2651fc7fa6a5b899
         self.speedy = 0
 
     def update(self):
@@ -111,7 +116,11 @@ class ball(pygame.sprite.Sprite):
             destroy_sound.play()
             self.rect.centerx = WIDTH/2
             self.rect.centery = HEIGHT/2
+<<<<<<< HEAD
             self.speedx = self.ball_speed
+=======
+            self.speedx = 15
+>>>>>>> b5fec24c3a93f3f2b98171fb2651fc7fa6a5b899
             self.speedy = 0
             Points[0] += 1
             timer = 8*FPS
@@ -123,7 +132,11 @@ class ball(pygame.sprite.Sprite):
             destroy_sound.play()
             self.rect.centerx = WIDTH/2
             self.rect.centery = HEIGHT/2
+<<<<<<< HEAD
             self.speedx = -self.ball_speed
+=======
+            self.speedx = -15
+>>>>>>> b5fec24c3a93f3f2b98171fb2651fc7fa6a5b899
             self.speedy = 0 
             Points[1] += 1
             timer = 8*FPS
@@ -171,6 +184,7 @@ while state != DONE:
     pygame.mixer.music.play(loops=-1)  #começa a musica
     while state == PLAYING: 
         clock.tick(FPS)
+<<<<<<< HEAD
         timer += 1
         if timer > FPS*10:
             print(timer)
@@ -178,6 +192,8 @@ while state != DONE:
             bola = ball(ball_img)
             all_sprites.add(bola)
             all_balls.add(bola)
+=======
+>>>>>>> b5fec24c3a93f3f2b98171fb2651fc7fa6a5b899
         # ----- Trata eventos
         for event in pygame.event.get():
             # ----- Verifica consequências
@@ -211,6 +227,49 @@ while state != DONE:
                     if event.key == pygame.K_DOWN:
                         player2.speedy = 0
 
+<<<<<<< HEAD
+=======
+
+        # ----- Atualiza estado do jogo
+        # Atualizando a posição dos meteoros
+        all_sprites.update()
+
+        # ----- Gera saídas
+        window.fill((0, 0, 0))  # Preenche com a cor branca
+        window.blit(background, (0, 0))
+        # Desenhando meteoros
+        all_sprites.draw(window)
+
+        # Desenhando o score
+        text_surface = font.render("{}   {}".format(Points[0],Points[1]), True, (255, 255, 0))
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (WIDTH / 2,  10)
+        window.blit(text_surface, text_rect)
+
+        #verifica se a quantidade de pontos para dar game over
+        for pontos in Points:
+            if pontos >= 3:
+                state = GAMEOVER
+                player1.speedy = 0
+                player2.speedy = 0
+        pygame.display.update()  # Mostra o novo frame para o jogador
+    pygame.mixer.music.stop()  #para a musica
+    while state == GAMEOVER:
+                clock.tick(FPS)
+                # ----- Trata eventos
+                for event in pygame.event.get():
+                    # ----- Verifica consequências
+                    if event.type == pygame.QUIT:
+                        state = DONE
+                    if event.type == pygame.KEYDOWN: #recomeçar o jogo
+                        state = PLAYING
+                        Points[0] = 0
+                        Points[1] = 0
+                window.fill((255,255,255))  # Preenche com a cor preta
+                pygame.display.update()  # Mostra o novo frame para o jogador
+# ===== Finalização =====
+pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
+>>>>>>> b5fec24c3a93f3f2b98171fb2651fc7fa6a5b899
 
         # ----- Atualiza estado do jogo
         # Atualizando a posição dos meteoros
