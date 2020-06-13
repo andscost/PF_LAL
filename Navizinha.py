@@ -11,32 +11,43 @@ pygame.init()
 WIDTH = 600
 HEIGHT = 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Pong')
+pygame.display.set_caption('CrazyPong')
 
 # ----- Inicia assets
-ball_WIDTH = 50
-ball_HEIGHT = 50
+ball_WIDTH = 35
+ball_HEIGHT = 35
 player_WIDTH = 20
 player_HEIGHT = 100
 Points = [0,0]
+FPS = 30
+timer = FPS*10 #tempo para aparecer uma nova bolinha
+espaço_da_tela = 10  #distancia do jogador de sua parede
+ball_speed = 5 #velocidade das bolas
+contato = 8 #define a largura da regiao de colisao que fica na frente do retangulo
 font = pygame.font.SysFont(None, 48)
-background = pygame.image.load('img/starfield.png').convert()
-background = pygame.transform.scale(background, (WIDTH,HEIGHT))
-inicio = pygame.image.load('img/inicio.png').convert()
-inicio_rect = background.get_rect()
-ball_img = pygame.image.load('img/fire_ball.png').convert_alpha()
-ball_img = pygame.transform.scale(ball_img, (ball_WIDTH, ball_HEIGHT))
-player1_img = pygame.image.load('img/player1.png').convert_alpha()
-player1_img = pygame.transform.scale(player1_img, (player_WIDTH, player_HEIGHT))
-player2_img = pygame.image.load('img/player2.png').convert_alpha()
-player2_img = pygame.transform.scale(player2_img, (player_WIDTH, player_HEIGHT))
 
-# ----- Carrega os sons do jogo
+assets = {}
+#carrega as telas
+assets['background'] = pygame.image.load('img/starfield.png').convert()
+assets['background'] = pygame.transform.scale(assets['background'], (WIDTH,HEIGHT))
+assets['inicio'] = pygame.image.load('img/inicio.png').convert()
+assets['inicio'] = pygame.transform.scale(assets['inicio'], (WIDTH,HEIGHT))
+assets['inicio_rect'] = assets['inicio'].get_rect()
+assets['gameover'] = pygame.image.load('img/gameover.png').convert()
+assets['gameover'] = pygame.transform.scale(assets['gameover'], (WIDTH,HEIGHT))
+assets['gameover_rect'] = assets['gameover'].get_rect()
+#carrega os sprites
+assets['ball_img'] = pygame.image.load('img/fire_ball.png').convert_alpha()
+assets['ball_img'] = pygame.transform.scale(assets['ball_img'], (ball_WIDTH, ball_HEIGHT))
+assets['player1_img'] = pygame.image.load('img/player1.png').convert_alpha()
+assets['player1_img'] = pygame.transform.scale(assets['player1_img'], (player_WIDTH, player_HEIGHT))
+assets['player2_img'] = pygame.image.load('img/player2.png').convert_alpha()
+assets['player2_img'] = pygame.transform.scale(assets['player2_img'], (player_WIDTH, player_HEIGHT))
+#carrega os sons do jogo
 pygame.mixer.music.load('snd/tgfcoder-FrozenJam-SeamlessLoop.ogg')
 pygame.mixer.music.set_volume(0.2)
-boom_sound = pygame.mixer.Sound('snd/expl3.wav')
-destroy_sound = pygame.mixer.Sound('snd/expl6.wav')
-pew_sound = pygame.mixer.Sound('snd/pew.wav')
+assets['destroy_sound'] = pygame.mixer.Sound('snd/expl6.wav')
+assets['pew_sound'] = pygame.mixer.Sound('snd/pew.wav')
 
 # ----- Inicia estruturas de dados
 # Definindo os novos tipos
@@ -46,7 +57,6 @@ class player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
         self.rect = self.image.get_rect()
-        espaço_da_tela = 10
         if player == 1:
             self.rect.left = espaço_da_tela
         if player == 2:
@@ -67,17 +77,19 @@ class ball(pygame.sprite.Sprite):
     def __init__(self, img):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.centery = HEIGHT/2
         #definir a direção e a velocidade inicial da bola
-        self.ball_speed = 15
-        self.speedx = 15
+        if len(all_balls)%2 == 0:
+            self.speedx = ball_speed
+        else: 
+            self.speedx = -ball_speed
         self.speedy = 0
 
     def update(self):
+        global timer
         # Atualizando a posição da bola  testar spritecollide
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -85,52 +97,55 @@ class ball(pygame.sprite.Sprite):
         if self.rect.bottom > HEIGHT or self.rect.top < 0:
             self.speedy *= -1
         # colisao da bola com os players, que randomiza os valores da direção
-        contato = 10 #define a largura da regiao de colisao que fica na frente do retangulo
         #player1
         if self.rect.left < player1.rect.right+contato and self.rect.left > player1.rect.right and self.rect.top < player1.rect.bottom and self.rect.bottom > player1.rect.top:
-            pew_sound.play()
+            assets['pew_sound'].play()
             rng = random.randint(12,20)
             angulo = (rng*math.pi)/16
-            self.speedx = -(self.ball_speed*math.cos(angulo))
-            self.speedy = self.ball_speed*math.sin(angulo)
+            self.speedx = -(ball_speed*math.cos(angulo))
+            self.speedy = ball_speed*math.sin(angulo)
         #player2
         if self.rect.right > player2.rect.left-contato and self.rect.right < player2.rect.left and self.rect.top < player2.rect.bottom and self.rect.bottom > player2.rect.top:
-            pew_sound.play()
+            assets['pew_sound'].play()
             rng = random.randint(12,20)
             angulo = (rng*math.pi)/16
-            self.speedx = self.ball_speed*math.cos(angulo)
-            self.speedy = self.ball_speed*math.sin(angulo)
+            self.speedx = ball_speed*math.cos(angulo)
+            self.speedy = ball_speed*math.sin(angulo)
         #renicia a posição da bolinha e sua velocidade caso alg pontue 
         if self.rect.left > WIDTH: #player 1 ganha ponto
-            destroy_sound.play()
+            assets['destroy_sound'].play()
             self.rect.centerx = WIDTH/2
             self.rect.centery = HEIGHT/2
-            self.speedx = 15
+            self.speedx = ball_speed
             self.speedy = 0
-            Points[0] += 1 
+            Points[0] += 1
+            timer = 8*FPS
+            for bolinha in all_balls:
+                    bolinha.kill() 
             
         if self.rect.right < 0: #player 2 ganha ponto
-            destroy_sound.play()
+            assets['destroy_sound'].play()
             self.rect.centerx = WIDTH/2
             self.rect.centery = HEIGHT/2
-            self.speedx = -15
+            self.speedx = -ball_speed
             self.speedy = 0 
-            Points[1] += 1  
-game = True
+            Points[1] += 1
+            timer = 8*FPS
+            for bolinha in all_balls:
+                    bolinha.kill()
 # Variável para o ajuste de velocidade
 clock = pygame.time.Clock()
-FPS = 30
 
 all_sprites = pygame.sprite.Group()
 
 # Criando os jogadores
-player1 = player(player1_img,1)
-player2 = player(player2_img,2)
+player1 = player(assets['player1_img'],1)
+player2 = player(assets['player2_img'],2)
 all_sprites.add(player1)
 all_sprites.add(player2)
-# Criando a bola
-ball = ball(ball_img)
-all_sprites.add(ball)
+
+# Criando o array das bolas
+all_balls = pygame.sprite.Group()
 
 DONE = 0
 START = 1
@@ -153,11 +168,17 @@ while state != DONE:
                 Points[0] = 0
                 Points[1] = 0
         window.fill((0,0,0))  # Preenche com a cor preta
-        window.blit(inicio, inicio_rect) 
+        window.blit(assets['inicio'], assets['inicio_rect']) 
         pygame.display.update()
     pygame.mixer.music.play(loops=-1)  #começa a musica
     while state == PLAYING: 
         clock.tick(FPS)
+        timer += 1
+        if timer > FPS*10:
+            timer = 0
+            bola = ball(assets['ball_img'])
+            all_sprites.add(bola)
+            all_balls.add(bola)
         # ----- Trata eventos
         for event in pygame.event.get():
             # ----- Verifica consequências
@@ -169,14 +190,18 @@ while state != DONE:
                     # Dependendo da tecla, altera a velocidade.
                     #player1
                     if event.key == pygame.K_w:
-                        player1.speedy = -8
+                        player1.speedy = -10
                     if event.key == pygame.K_s:
-                        player1.speedy = 8
+                        player1.speedy = 10
+                    if event.key == pygame.K_a:
+                        player1.speedx = -10
+                    if event.key == pygame.K_d:
+                        player1.speedx = 10
                     #player2
                     if event.key == pygame.K_UP:
-                        player2.speedy = -8
+                        player2.speedy = -10
                     if event.key == pygame.K_DOWN:
-                        player2.speedy = 8
+                        player2.speedy = 10
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
                     # Dependendo da tecla, altera a velocidade.
@@ -190,16 +215,14 @@ while state != DONE:
                         player2.speedy = 0
                     if event.key == pygame.K_DOWN:
                         player2.speedy = 0
-
-
         # ----- Atualiza estado do jogo
-        # Atualizando a posição dos meteoros
+        # Atualizando a posição dos sprites
         all_sprites.update()
 
         # ----- Gera saídas
         window.fill((0, 0, 0))  # Preenche com a cor branca
-        window.blit(background, (0, 0))
-        # Desenhando meteoros
+        window.blit(assets['background'], (0, 0))
+        # Desenhando sprites
         all_sprites.draw(window)
 
         # Desenhando o score
@@ -212,8 +235,11 @@ while state != DONE:
         for pontos in Points:
             if pontos >= 3:
                 state = GAMEOVER
+                #reenicia todas as codições dos jogadores
                 player1.speedy = 0
                 player2.speedy = 0
+                player1.rect.centery = HEIGHT/2
+                player2.rect.centery = HEIGHT/2
         pygame.display.update()  # Mostra o novo frame para o jogador
     pygame.mixer.music.stop()  #para a musica
     while state == GAMEOVER:
@@ -228,6 +254,7 @@ while state != DONE:
                         Points[0] = 0
                         Points[1] = 0
                 window.fill((255,255,255))  # Preenche com a cor preta
+                window.blit(assets['gameover'], (0, 0))
                 pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados

@@ -1,20 +1,15 @@
-# ===== Inicialização =====
-# ----- Importa e inicia pacotes
 import pygame
-import sys
 import os
 
-from config import FPS, WIDTH, HEIGHT, BLACK, Points, INIT, GAME, QUIT, ball_WIDTH, ball_HEIGHT, player_WIDTH, player_HEIGHT
+from config import FPS, WIDTH, HEIGHT, BLACK, DONE, PLAYING
+from assets import load_assets
 
 def init_screen (window): 
-
-    background = pygame.image.load('img/inicio.png').convert()
-    background = pygame.transform.scale(background, (WIDTH,HEIGHT))
-    background_rect = background.get_rect()
-
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
 
+    # Carrega o fundo da tela inicial
+    assets = load_assets()
     # ===== Loop principal =====
     game = True
     while game:
@@ -27,15 +22,11 @@ def init_screen (window):
                 game = False
 
             if event.type == pygame.KEYUP:
-                state = GAME
+                state = PLAYING
                 game = False
 
         # ----- Gera saídas
         window.fill(BLACK)  # Preenche com a cor branca
-        window.blit(background, background_rect)
-
-        pygame.display.update()  # Mostra o novo frame para o jogador
-    # ===== Finalização =====
-    pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
-
+        window.blit(assets['inicio'], assets['inicio_rect'])
+        pygame.display.flip()  # Mostra o novo frame para o jogador
     return state

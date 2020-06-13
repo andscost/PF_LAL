@@ -1,41 +1,41 @@
 import pygame
-import os
 import sys
-from config import FPS, WIDTH, HEIGHT, BLACK, Points, INIT, GAME, QUIT, ball_WIDTH, ball_HEIGHT, player_WIDTH, player_HEIGHT
-from assets import background, ball_img, player1_img, player2_img,boom_sound, destroy_sound, pew_sound, carrega_musica
-from sprites import Player, Ball 
+from config import FPS, WIDTH, HEIGHT, BLACK, Points, START, DONE, PLAYING, GAMEOVER
+from assets import load_assets
+from sprites import player, ball 
 
 
 def game_screen(window):
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
+    assets = load_assets()
 
     all_sprites = pygame.sprite.Group()
-
     # Criando os jogadores
-    player1 = Player(player1_img,1)
-    player2 = Player(player2_img,2)
+    player1 = player(assets['player1_img'],1)
+    player2 = player(assets['player2_img'],2)
     all_sprites.add(player1)
     all_sprites.add(player2)
 
-    # Criando a bola
-    #ball = Ball(ball_img)
-    #all_sprites.add(ball)
+    # Criando o array das bolas
+    all_balls = pygame.sprite.Group()
+
     pygame.font.init()
     pygame.mixer.init()
     
-    DONE = 0
-    PLAYING = 1
-    PERDEVIDA = 2
     font = pygame.font.Font(None, 48)
-    #font = pygame.font.Sysfont(None, 48)
-    state = PLAYING
 
+    state = PLAYING
     # ===== Loop principal =====
-    carrega_musica()
     pygame.mixer.music.play(loops=-1)
-    while state != DONE:
+    while state == PLAYING:
         clock.tick(FPS)
+        timer += 1
+        if timer > FPS*10:
+            timer = 0
+            bola = ball(assets['ball_img'],all_balls)
+            all_sprites.add(bola)
+            all_balls.add(bola)
         # ----- Trata eventos
         for event in pygame.event.get():
             # ----- Verifica consequências
@@ -47,27 +47,31 @@ def game_screen(window):
                     # Dependendo da tecla, altera a velocidade.
                     #player1
                     if event.key == pygame.K_w:
-                        player1.speedy -= 8
+                        player1.speedy = -10
                     if event.key == pygame.K_s:
-                        player1.speedy += 8
+                        player1.speedy = 10
+                    if event.key == pygame.K_a:
+                        player1.speedx = -10
+                    if event.key == pygame.K_d:
+                        player1.speedx = 10
                     #player2
                     if event.key == pygame.K_UP:
-                        player2.speedy -= 8
+                        player2.speedy = -10
                     if event.key == pygame.K_DOWN:
-                        player2.speedy += 8
+                        player2.speedy = 10
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
                     # Dependendo da tecla, altera a velocidade.
                     #player1
                     if event.key == pygame.K_w:
-                        player1.speedy += 8
+                        player1.speedy = 0
                     if event.key == pygame.K_s:
-                        player1.speedy -= 8
+                        player1.speedy = 0
                     #player2
                     if event.key == pygame.K_UP:
-                        player2.speedy += 8
+                        player2.speedy = 0
                     if event.key == pygame.K_DOWN:
-                        player2.speedy -= 8
+                        player2.speedy = 0
 
 
         # ----- Atualiza estado do jogo
@@ -86,5 +90,15 @@ def game_screen(window):
         text_rect.midtop = (WIDTH / 2,  10)
         window.blit(text_surface, text_rect)
 
+        #verifica se a quantidade de pontos para dar game over
+        for pontos in Points:
+            if pontos >= 3:
+                state = GAMEOVER
+                #reenicia todas as codições dos jogadores
+                player1.speedy = 0
+                player2.speedy = 0
+                player1.rect.centery = HEIGHT/2
+                player2.rect.centery = HEIGHT/2
         pygame.display.update()  # Mostra o novo frame para o jogador
-
+    pygame.mixer.music.stop()  #para a musica
+    return state
