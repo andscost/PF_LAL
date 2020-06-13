@@ -11,8 +11,10 @@ def load_assets():
     assets['background'] = pygame.image.load(os.path.join('img/starfield.png')).convert()
     assets['background'] = pygame.transform.scale(assets['background'], (WIDTH,HEIGHT))
     assets['inicio'] = pygame.image.load(os.path.join('img/inicio.png')).convert()
+    assets['inicio'] = pygame.transform.scale(assets['inicio'], (WIDTH,HEIGHT))
     assets['inicio_rect'] = assets['background'].get_rect()
     assets['gameover'] = pygame.image.load(os.path.join('img/gameover.png')).convert()
+    assets['gameover'] = pygame.transform.scale(assets['gameover'], (WIDTH,HEIGHT))
     assets['gameover_rect'] = assets['background'].get_rect()
     #carrega os sprites
     assets['ball_img'] = pygame.image.load(os.path.join('img/fire_ball.png')).convert_alpha()

@@ -1,34 +1,32 @@
 import pygame
-import os
-
 from config import FPS, BLACK, Points, PLAYING, DONE
+from assets import load_assets
 
 def gameover_screen (window): 
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
 
-    # Carrega o fundo da tela inicial
+    # Carrega os assets
     assets = load_assets()
     # ===== Loop principal =====
-    game = True
-    while game:
+    gameover = True
+    while gameover:
         clock.tick(FPS)
         # ----- Trata eventos
         for event in pygame.event.get():
             # ----- Verifica consequências
             if event.type == pygame.QUIT:
                 state = DONE
-                game = False
+                gameover = False
 
             if event.type == pygame.KEYUP:
                 state = PLAYING
                 Points[0] = 0
                 Points[1] = 0
-                game = False
+                gameover = False
 
-        # ----- Gera saídas
-        window.fill(BLACK)  # Preenche com a cor branca
+        #atualiza a tela
+        window.fill(BLACK)  
         window.blit(assets['gameover'], assets['gameover_rect'])
-
-        pygame.display.flip()  # Mostra o novo frame para o jogador
+        pygame.display.flip()
     return state
