@@ -8,7 +8,7 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 def load_assets():
     assets = {}
     #carrega as telas
-    assets['background'] = pygame.image.load(os.path.join('img/starfield.png')).convert()
+    assets['background'] = pygame.image.load(os.path.join('img/tela_terra.jpg')).convert()
     assets['background'] = pygame.transform.scale(assets['background'], (WIDTH,HEIGHT))
     assets['inicio'] = pygame.image.load(os.path.join('img/inicio.png')).convert()
     assets['inicio'] = pygame.transform.scale(assets['inicio'], (WIDTH,HEIGHT))
@@ -24,8 +24,8 @@ def load_assets():
     assets['player2_img'] = pygame.image.load(os.path.join('img/player2.png')).convert_alpha()
     assets['player2_img'] = pygame.transform.scale(assets['player2_img'], (player_WIDTH, player_HEIGHT))
     #carrega os sons do jogo
-    pygame.mixer.music.load('snd/tgfcoder-FrozenJam-SeamlessLoop.ogg')
-    pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.load('snd/avicci.mp3')
+    pygame.mixer.music.set_volume(0.5)
     assets['destroy_sound'] = pygame.mixer.Sound('snd/expl6.wav')
     assets['pew_sound'] = pygame.mixer.Sound('snd/pew.wav')
     return assets
