@@ -133,7 +133,7 @@ def game_screen(window):
         all_sprites.draw(window)
 
         # Desenhando o score
-        text_surface = font.render("{}   {}".format(Points[0],Points[1]), True, (255, 255, 0))
+        text_surface = font.render("{}   {}".format(Points[0],Points[1]), True, (0, 255, 0))
         text_rect = text_surface.get_rect()
         text_rect.midtop = (WIDTH / 2,  10)
         window.blit(text_surface, text_rect)

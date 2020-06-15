@@ -1,5 +1,5 @@
 #informaçoes base
-WIDTH = 600 # Largura da tela
+WIDTH = 700 # Largura da tela
 HEIGHT = 600 # Altura da tela
 FPS = 60 # Frames por segundo
 
