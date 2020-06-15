@@ -4,15 +4,15 @@ Alunos: André Costa
 
 Engenharia 1A
 
-Projeto Final da diciplina de Desing de Software, que constitui um jogo criado pela biblioteca Pygame
+Projeto Final da diciplina de Desing de Software, que constitui um jogo criado pela biblioteca Pygame.
 
 Bem vindo ao CrazyPong!
 
 REGRAS:
-Existem 2 jogadores que so se movimentam para cima ou para baixo a cada 10 segundos aparece uma nova bola no campo
-quando a bola é atingida pelo player, ela toma uma direção aleatória, tornando o jogo mais desafiador.
-O objetivo é nao deixar nenhuma bola atravessar seu campo, caso ocorra, o outro jogador ganhará um ponto 
-ganhará o jogador que conseguir atingir 3 pontos!
+Existem 2 jogadores que só se movimentam para cima ou para baixo, a cada 10 segundos aparece uma nova bola no campo.
+Quando a bola é atingida pelo player, ela toma uma direção aleatória, tornando o jogo mais desafiador.
+O objetivo é não deixar nenhuma bola atravessar seu campo, caso ocorra, o outro jogador ganhará um ponto.
+Vence o jogador que conseguir atingir 3 pontos!
 
 CONTROLES:
 Player1(esquerda): W - (mover para cima)  S - (mover para baixo)
