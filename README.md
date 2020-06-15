@@ -1,5 +1,5 @@
-Alunos: André Costa
-        Luiz Eduardo Santoro
+Alunos: André Costa,
+        Luiz Eduardo Santoro,
         Leonardo Elias
 
 Engenharia 1A
@@ -14,10 +14,13 @@ Quando a bola é atingida pelo player, ela toma uma direção aleatória, tornan
 O objetivo é não deixar nenhuma bola atravessar seu campo, caso ocorra, o outro jogador ganhará um ponto.
 Vence o jogador que conseguir atingir 3 pontos!
 
+Link para uma breve apresentação do projeto: https://youtu.be/YPjEGDRo0yI
+
 CONTROLES:
 Player1(esquerda): W - (mover para cima)  S - (mover para baixo)
 
 Player2(direita): UpArrow - (mover para cima)  DownArrow - (mover para baixo)
 
 Para jogar, rode o arquivo CrazyPong
+
 
